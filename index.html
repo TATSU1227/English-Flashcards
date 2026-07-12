@@ -716,10 +716,10 @@ html[data-theme="dark"] .select-bar .sb-x{background:#3a3a42; border-color:#5454
 <div class="modal" id="modal-word">
   <div class="modal-box">
     <h2 id="word-modal-title">単語を追加</h2>
-    <div class="field"><label>単語(英語)*</label><input type="text" id="in-term" placeholder="例: awesome" autocomplete="off"></div>
-    <div class="field"><label>意味 *(「、」区切りで複数OK → 記述の正解が増えます)</label><input type="text" id="in-meaning" placeholder="例: 最高、すごい" autocomplete="off"></div>
-    <div class="field"><label>例文(正解したときに表示)</label><textarea id="in-example" placeholder="例: That concert was awesome!"></textarea></div>
-    <div class="field"><label>説明・メモ(正解したときに表示)</label><textarea id="in-note" placeholder="例: カジュアルな場面でよく使うスラング"></textarea></div>
+    <div class="field"><label>おもて(単語・用語)*</label><input type="text" id="in-term" placeholder="例: 光合成" autocomplete="off"></div>
+    <div class="field"><label>うら(意味・答え)*(「、」区切りで複数OK → 記述の正解が増えます)</label><input type="text" id="in-meaning" placeholder="例: 植物が光から養分を作るはたらき" autocomplete="off"></div>
+    <div class="field"><label>例文・補足(正解したときに表示)</label><textarea id="in-example" placeholder="例: 植物は葉緑体で光合成を行う"></textarea></div>
+    <div class="field"><label>説明・メモ(正解したときに表示)</label><textarea id="in-note" placeholder="例: 理科のテストによく出る"></textarea></div>
     <div class="field">
       <label>ランダムモードでの出題形式(難易度調整)</label>
       <div class="seg" id="qmode-seg">
@@ -740,7 +740,7 @@ html[data-theme="dark"] .select-bar .sb-x{background:#3a3a42; border-color:#5454
 <div class="modal" id="modal-folder">
   <div class="modal-box">
     <h2 id="folder-modal-title">フォルダを作成</h2>
-    <div class="field"><label>フォルダ名 *</label><input type="text" id="in-folder-name" placeholder="例: スラング" autocomplete="off"></div>
+    <div class="field"><label>フォルダ名 *</label><input type="text" id="in-folder-name" placeholder="例: 理科" autocomplete="off"></div>
     <div class="modal-actions">
       <button class="duo-btn btn-ghost" id="btn-folder-cancel">キャンセル</button>
       <button class="duo-btn btn-green" id="btn-folder-save">保存する</button>
@@ -780,8 +780,8 @@ html[data-theme="dark"] .select-bar .sb-x{background:#3a3a42; border-color:#5454
       <div id="mp-dir-block">
         <div class="section-label" style="margin:16px 2px 8px">出題の方向</div>
         <div class="chip-row" id="mp-dir-chips">
-          <button class="chip selected" data-dir="e2j">英語 → 意味</button>
-          <button class="chip" data-dir="j2e">意味 → 英語</button>
+          <button class="chip selected" data-dir="e2j">おもて → うら</button>
+          <button class="chip" data-dir="j2e">うら → おもて</button>
           <button class="chip" data-dir="mix">ミックス</button>
         </div>
       </div>
@@ -1006,7 +1006,7 @@ const Sound = (() => {
 /* =====================================================
    storage
 ===================================================== */
-const KEY = 'tangoPopDB_v1';
+const KEY = 'tanlabAllDB_v1';
 const DEFAULT_SETTINGS = { timer: 0, sound: true, folderView: 'tile', folderSort: 'updated', theme: 'system' };
 const storage = (() => {
   let ok = true;
@@ -1642,7 +1642,7 @@ $('#qmode-seg').addEventListener('click', e => {
 $('#btn-word-cancel').onclick = () => $('#modal-word').classList.remove('active');
 $('#btn-word-save').onclick = () => {
   const term = $('#in-term').value.trim(), meaning = $('#in-meaning').value.trim();
-  if (!term || !meaning){ toast('単語と意味は必須だよ!'); return; }
+  if (!term || !meaning){ toast('おもてとうらは必須だよ!'); return; }
   if (editingWordId){
     const w = DB.words.find(x => x.id === editingWordId);
     Object.assign(w, { term, meaning, example: $('#in-example').value.trim(), note: $('#in-note').value.trim(), qmode: selQmode, updated: Date.now() });
@@ -1705,12 +1705,12 @@ $$('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m)
    クイズ設定
 ===================================================== */
 const MODE_INFO = {
-  ox:     { name: '○✕クイズ',     icon: 'ox',      color: 'mc-green',  min: 2, desc: '意味が合ってるか判定' },
-  choice: { name: '4択クイズ',     icon: 'grid4',   color: 'mc-blue',   min: 4, desc: '正しい意味を選ぶ' },
+  ox:     { name: '○✕クイズ',     icon: 'ox',      color: 'mc-green',  min: 2, desc: 'うらが合ってるか判定' },
+  choice: { name: '4択クイズ',     icon: 'grid4',   color: 'mc-blue',   min: 4, desc: '正しいうらを選ぶ' },
   write:  { name: '記述クイズ',     icon: 'pencilW', color: 'mc-red',    min: 1, desc: '答えをタイプする' },
   card:   { name: '単語カード',     icon: 'cards',   color: 'mc-gold',   min: 1, desc: 'めくって覚える' },
   match:  { name: 'マッチング',     icon: 'puzzle',  color: 'mc-purple', min: 3, desc: '線でペアをつなぐ' },
-  shoot:  { name: 'シューティング', icon: 'rocket',  color: 'mc-teal',   min: 4, desc: '正しい意味を撃て!' },
+  shoot:  { name: 'シューティング', icon: 'rocket',  color: 'mc-teal',   min: 4, desc: '正しいうらを撃て!' },
   stack:  { name: 'つみあげ',       icon: 'blocks',  color: 'mc-pink',   min: 4, desc: '準備中', locked: true },
   random: { name: 'ランダム',       icon: 'dice',    color: 'mc-orange', min: 2, desc: 'ぜんぶミックス!' }
 };
@@ -1806,14 +1806,14 @@ function openModePopup(mode){
   const dirLabel = $('#mp-dir-block').querySelector('.section-label');
   if (isCard){
     dirLabel.textContent = 'スタートする面';
-    dirChips[0].textContent = '表(英語)から'; dirChips[0].dataset.dir = 'e2j';
-    dirChips[1].textContent = '裏(意味)から'; dirChips[1].dataset.dir = 'j2e';
+    dirChips[0].textContent = '表(おもて)から'; dirChips[0].dataset.dir = 'e2j';
+    dirChips[1].textContent = '裏(うら)から'; dirChips[1].dataset.dir = 'j2e';
     dirChips[2].style.display = 'none';
     if (mpConfig.dir === 'mix') mpConfig.dir = 'e2j';
   } else {
     dirLabel.textContent = '出題の方向';
-    dirChips[0].textContent = '英語 → 意味'; dirChips[0].dataset.dir = 'e2j';
-    dirChips[1].textContent = '意味 → 英語'; dirChips[1].dataset.dir = 'j2e';
+    dirChips[0].textContent = 'おもて → うら'; dirChips[0].dataset.dir = 'e2j';
+    dirChips[1].textContent = 'うら → おもて'; dirChips[1].dataset.dir = 'j2e';
     dirChips[2].style.display = '';
   }
   $$('#mp-count-chips .chip').forEach(c => c.classList.toggle('selected', c.dataset.count === mpConfig.count));
@@ -1823,7 +1823,7 @@ function openModePopup(mode){
   const startBtn = $('#btn-mode-start');
   let note = '';
   if (mode === 'card') note = '左スワイプ=次へ / 右スワイプ=前へ / タップでめくる。最後までいくと先頭にループするよ(成績には記録されません)';
-  else if (mode === 'match') note = '左の単語と右の意味をタップしてペアにしてね。タイムも計るよ';
+  else if (mode === 'match') note = '左のおもてと右のうらをタップしてペアにしてね。タイムも計るよ';
   else if (mode === 'shoot') note = '上から落ちてくる中から正しい答えを撃とう!ライフは3つ';
   else if (mode === 'random') note = '各単語の「出題形式」設定に合わせて色々な形式で出題するよ';
   if (DB.settings.timer > 0 && ['ox','choice','write','random'].includes(mode)) note += (note ? ' / ' : '') + `制限時間${DB.settings.timer}秒`;
@@ -1860,13 +1860,10 @@ function judgeWrite(answer, targetRaw, jp){
   const targets = targetRaw.split(/[、,,\/／;;・]/).map(norm).filter(t => t);
   for (const t of targets){
     if (A === t) return true;
-    if (jp){
-      if (A.length >= 2 && t.includes(A)) return true;
-      if (t.length >= 2 && A.includes(t)) return true;
-      if (t.length >= 3 && lev(A, t) <= 1) return true;
-    } else {
-      if (t.length >= 4 && lev(A, t) <= 1) return true;
-    }
+    // なんでも版: 表裏どちらの記述でも、部分一致+誤字1文字までゆるく許容
+    if (A.length >= 2 && t.includes(A)) return true;
+    if (t.length >= 2 && A.includes(t)) return true;
+    if (t.length >= 3 && lev(A, t) <= 1) return true;
   }
   return false;
 }
@@ -1985,7 +1982,7 @@ function renderOX(q, area){
     const ok = (picked === '1') === isTrue;
     opts.forEach(x => x.disabled = true);
     $('#answer-btn').disabled = true;
-    settle(q, ok, isTrue ? null : `「${shown}」は別の単語の${q.dir === 'e2j' ? '意味' : 'つづり'}だったよ`);
+    settle(q, ok, isTrue ? null : `「${shown}」は別のカードの${q.dir === 'e2j' ? 'うら' : 'おもて'}だったよ`);
   };
 }
 function renderChoice(q, area){
@@ -1994,7 +1991,7 @@ function renderChoice(q, area){
   const options = shuffle([correct, ...distract]);
   let picked = null;
   const div = document.createElement('div');
-  div.innerHTML = `<div class="q-kind">${ic('grid4', 16)} 正しい${q.dir === 'e2j' ? '意味' : '英語'}はどれ?</div>
+  div.innerHTML = `<div class="q-kind">${ic('grid4', 16)} 正しい${q.dir === 'e2j' ? 'うら' : 'おもて'}はどれ?</div>
     <div class="q-prompt">${esc(promptOf(q))}</div>
     <div class="choice-list">${options.map((o, i) => `<button class="choice-btn" style="animation-delay:${i * .06}s" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
     <button class="duo-btn btn-green btn-wide" id="answer-btn" style="margin-top:16px" disabled>回答する</button>`;
@@ -2019,9 +2016,9 @@ function renderChoice(q, area){
 function renderWrite(q, area){
   const jp = q.dir === 'e2j';
   const div = document.createElement('div');
-  div.innerHTML = `<div class="q-kind">${ic('pencil', 16)} ${jp ? '意味を日本語で書こう' : '英語のつづりを書こう'}</div>
+  div.innerHTML = `<div class="q-kind">${ic('pencil', 16)} ${jp ? 'うら(答え)を書こう' : 'おもて(単語・用語)を書こう'}</div>
     <div class="q-prompt">${esc(promptOf(q))}</div>
-    <input class="write-input" id="write-in" placeholder="${jp ? '意味を入力…' : 'Type in English…'}" autocomplete="off" autocapitalize="off">
+    <input class="write-input" id="write-in" placeholder="${jp ? '答えを入力…' : 'おもてを入力…'}" autocomplete="off" autocapitalize="off">
     <button class="duo-btn btn-green btn-wide" id="write-submit">答える!</button>`;
   area.appendChild(div);
   const input = $('#write-in');
@@ -2174,7 +2171,7 @@ function startMatch(pool){
   const rights = shuffle(pairs.map(w => ({ wid: w.id, text: w.meaning })));
   const area = $('#q-area');
   area.innerHTML = `
-    <div class="q-kind">${ic('puzzle', 16)} 左の単語と、右の意味をタップしてペアにしよう!</div>
+    <div class="q-kind">${ic('puzzle', 16)} 左のおもてと、右のうらをタップしてペアにしよう!</div>
     <div class="match-head"><span id="match-time" class="num">0.0秒</span><span id="match-miss">ミス: 0</span></div>
     <div class="match-cols">
       <div class="match-col left" id="mcol-left"></div>
@@ -2270,7 +2267,7 @@ function shootRound(){
   const q = st.qs[st.idx];
   $('#play-progress').style.width = (st.idx / st.qs.length * 100) + '%';
   $('#shoot-round').textContent = `${st.idx + 1} / ${st.qs.length}問  スコア ${st.score}`;
-  $('#cannon-label').textContent = q.dir === 'e2j' ? 'この単語の意味を撃て!' : 'この意味の英語を撃て!';
+  $('#cannon-label').textContent = q.dir === 'e2j' ? '正しい「うら」を撃て!' : '正しい「おもて」を撃て!';
   $('#cannon-word').textContent = promptOf(q);
   shootHearts();
 
@@ -2518,24 +2515,6 @@ $('#btn-reset').onclick = async () => {
   DB = freshDB(); save(); currentFolderId = null; quizConfig.folderId = null; showView('home'); toast('まっさらにしたよ');
 };
 
-/* =====================================================
-   初回サンプルデータ
-===================================================== */
-if (!DB.folders.length && !DB.words.length && !Object.keys(DB.daily).length){
-  const fEn = { id: uid(), name: '英語', parentId: null, created: Date.now(), updated: Date.now() };
-  const fSl = { id: uid(), name: 'スラング', parentId: fEn.id, created: Date.now(), updated: Date.now() };
-  DB.folders.push(fEn, fSl);
-  const samples = [
-    { term: 'awesome', meaning: '最高、すごい', example: 'That concert was awesome!', note: 'カジュアルな褒め言葉の定番', qmode: 'both' },
-    { term: 'chill', meaning: 'まったりする、落ち着く', example: "Let's just chill at home today.", note: '「chill out」で「落ち着けよ」の意味にも', qmode: 'both' },
-    { term: 'lit', meaning: '盛り上がってる、ヤバい(良い意味)', example: 'The party was so lit!', note: 'パーティーやイベントによく使うスラング', qmode: 'choice' },
-    { term: 'salty', meaning: 'イラついてる、根に持ってる', example: "He's still salty about losing the game.", note: '「しょっぱい」→「不機嫌」の意味に', qmode: 'both' },
-    { term: 'flex', meaning: '自慢する、見せびらかす', example: 'Stop flexing your new watch!', note: '筋肉を見せる→自慢する、が由来', qmode: 'both' },
-    { term: 'vibe', meaning: '雰囲気、ノリ', example: 'I love the vibe of this café.', note: '「good vibes」=良い雰囲気', qmode: 'write' }
-  ];
-  samples.forEach(s => DB.words.push(Object.assign({ id: uid(), folderId: fSl.id, c: 0, wr: 0, created: Date.now(), updated: Date.now() }, s)));
-  save();
-}
 
 /* ---------- タブバー高さ計測(FAB位置合わせ)---------- */
 function syncTabbarHeight(){
